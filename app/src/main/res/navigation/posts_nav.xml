@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/postsFeedFragment">
+
+    <fragment
+        android:id="@+id/postsFeedFragment"
+        android:name="com.htec.task.ui.main.fragments.PostsFeedFragment"
+        android:label="@string/fragment_posts_title"
+        tools:layout="@layout/fragment_posts_feed" >
+        <action
+            android:id="@+id/action_postsFeedFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.htec.task.ui.main.fragments.PostDetailsFragment"
+        android:label="@string/fragment_details_title"
+        tools:layout="@layout/fragment_post_details" >
+        <action
+            android:id="@+id/action_postDetailsFragment_to_postsFeedFragment"
+            app:destination="@id/postsFeedFragment" />
+        <argument
+            android:name="post"
+            app:argType="com.htec.task.model.db.PostDBModel" />
+    </fragment>
+</navigation>
