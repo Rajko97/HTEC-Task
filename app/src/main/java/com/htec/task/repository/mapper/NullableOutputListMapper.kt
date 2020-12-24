@@ -1,4 +1,4 @@
-package com.rajko.stefanexpress.repository.mapper
+package com.htec.task.repository.mapper
 
 interface NullableOutputListMapper<I, O>: Mapper<List<I>, List<O>?>
 

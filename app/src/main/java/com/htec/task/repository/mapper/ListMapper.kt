@@ -1,7 +1,7 @@
-package com.rajko.stefanexpress.repository.mapper
+package com.htec.task.repository.mapper
 
 interface ListMapper<I, O> :
-    Mapper<List<I>, List<O>>
+        Mapper<List<I>, List<O>>
 
 class ListMapperImpl<I, O>(private val mapper: Mapper<I, O>) :
     ListMapper<I, O> {

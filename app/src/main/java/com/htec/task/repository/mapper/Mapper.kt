@@ -1,4 +1,4 @@
-package com.rajko.stefanexpress.repository.mapper
+package com.htec.task.repository.mapper
 
 interface Mapper<I, O> {
     fun map(input: I) : O
