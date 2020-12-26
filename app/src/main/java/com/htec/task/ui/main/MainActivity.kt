@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private fun isDetailsFragmentCurrentlyShown() : Boolean{
+    private fun isDetailsFragmentCurrentlyShown() : Boolean {
         return navController.currentDestination?.id == R.id.postDetailsFragment
     }
 }

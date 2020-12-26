@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.htec.task.R
 import com.htec.task.ui.main.data.MainViewModel
 import kotlinx.android.synthetic.main.fragment_posts_feed.view.*
@@ -23,9 +22,10 @@ class PostsFeedFragment : Fragment() {
 
         val adapter = PostsFeedRecyclerAdapter()
         v.recyclerPostsList.apply {
-            val lm = LinearLayoutManager(context)
-            layoutManager = lm
-            addItemDecoration(DividerItemDecoration(context, lm.orientation))
+            with(LinearLayoutManager(context)) {
+                layoutManager = this
+                addItemDecoration(DividerItemDecoration(context, this.orientation))
+            }
             this.adapter = adapter
         }
 
@@ -34,15 +34,12 @@ class PostsFeedFragment : Fragment() {
             adapter.setData(postsList)
         })
 
-        val swipeRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
-        swipeRefreshLayout.setOnRefreshListener {
+        v.swipeRefresh.setOnRefreshListener {
             viewModel.fetchPostList()
             Toast.makeText(requireContext(), getString(R.string.success_refreshed_posts_list), Toast.LENGTH_SHORT).show()
-            swipeRefreshLayout.isRefreshing = false
+            v.swipeRefresh.isRefreshing = false
         }
         activity?.invalidateOptionsMenu()
         return v
     }
-
-
 }

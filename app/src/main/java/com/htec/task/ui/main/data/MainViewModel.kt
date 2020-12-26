@@ -1,43 +1,45 @@
 package com.htec.task.ui.main.data
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.htec.task.model.db.PostDBModel
 import com.htec.task.model.network.AuthorsNetworkModel
 import com.htec.task.repository.Repository
+import com.htec.task.repository.PreferenceDataStore
+import com.htec.task.repository.retrofit.ResultWrapper
 import com.htec.task.repository.room.RoomPersistenceService
-import io.reactivex.Flowable
+import com.htec.task.utils.Constants
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-
-private const val KEY_LAST_UPDATE = "lastUpdateMillis"
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
     val readAllData: LiveData<List<PostDBModel>>
     private val repository: Repository
+    private val preferenceDataStore : PreferenceDataStore
 
     init {
-        val postDao = RoomPersistenceService.getDatabase(application).postDao()
+        val postDao = RoomPersistenceService.invoke(application).postDao()
         repository = Repository(postDao)
         readAllData = repository.readAllData
-        val sharedPreferences = getApplication<Application>().getSharedPreferences("htec-test", Context.MODE_PRIVATE)
-        val lastUpdateTime = sharedPreferences.getLong(KEY_LAST_UPDATE, 0)
-        val now = System.currentTimeMillis()
-        if (TimeUnit.MILLISECONDS.toMinutes(now - lastUpdateTime) >= 5) {
-            storeLastUpdatedTime()
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.fetchPostList()
+        preferenceDataStore = PreferenceDataStore(application)
+
+        viewModelScope.launch {
+            val lastUpdateTime: Long = preferenceDataStore.readLastUpdateTime.first()
+            val now = System.currentTimeMillis()
+            if (TimeUnit.MILLISECONDS.toMinutes(now - lastUpdateTime) >= Constants.INVALIDATE_CACHE_TIME_IN_MINUTES) {
+                fetchPostList()
             }
         }
     }
 
-    fun fetchAuthorData(authorId : Int) : Flowable<AuthorsNetworkModel> {
+    fun authorData(authorId : Int) : LiveData<ResultWrapper<AuthorsNetworkModel>> {
         return repository.fetchAuthorData(authorId)
+    }
+
+    fun cancelFetchingAuthorData() {
+        repository.cancelFetchingAuthorData()
     }
 
     fun removePost(post : PostDBModel) {
@@ -53,8 +55,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    private fun storeLastUpdatedTime() {
-        val sp = getApplication<Application>().getSharedPreferences("htec-test", Context.MODE_PRIVATE)
-        sp.edit().putLong(KEY_LAST_UPDATE, System.currentTimeMillis()).apply()
+    private fun storeLastUpdatedTime() = viewModelScope.launch(Dispatchers.IO) {
+        preferenceDataStore.saveCurrentTime()
     }
 }

@@ -19,9 +19,6 @@
         android:name="com.htec.task.ui.main.fragments.PostDetailsFragment"
         android:label="@string/fragment_details_title"
         tools:layout="@layout/fragment_post_details" >
-        <action
-            android:id="@+id/action_postDetailsFragment_to_postsFeedFragment"
-            app:destination="@id/postsFeedFragment" />
         <argument
             android:name="post"
             app:argType="com.htec.task.model.db.PostDBModel" />
