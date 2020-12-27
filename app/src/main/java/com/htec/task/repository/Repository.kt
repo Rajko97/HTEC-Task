@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.htec.task.model.db.PostDBModel
 import com.htec.task.model.network.AuthorsNetworkModel
+import com.htec.task.model.network.PostNetworkModel
 import com.htec.task.repository.mapper.DataMapper
 import com.htec.task.repository.retrofit.*
 import com.htec.task.repository.room.PostDao
@@ -11,6 +12,7 @@ import com.htec.task.utils.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import retrofit2.Response
 import java.util.concurrent.TimeUnit
 
 class Repository(private val postDao: PostDao) {
@@ -26,12 +28,17 @@ class Repository(private val postDao: PostDao) {
     }
 
     suspend fun fetchPostList() {
-        val response = postsApi.fetchAllPostsFeed().execute()
-        if(response.isSuccessful && response.body() != null) {
-            val data = response.body()
-            if (data != null) {
-                insertMany(DataMapper.convertNetworkToDB(data))
+        lateinit var response : Response<List<PostNetworkModel>>
+        try {
+            response = postsApi.fetchAllPostsFeed().execute()
+            if (response.isSuccessful && response.body() != null) {
+                val data = response.body()
+                if (data != null) {
+                    insertMany(DataMapper.convertNetworkToDB(data))
+                }
             }
+        } catch(exception : Exception) {
+
         }
     }
 

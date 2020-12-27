@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htec.task.R
 import com.htec.task.ui.main.data.MainViewModel
+import kotlinx.android.synthetic.main.fragment_posts_feed.*
 import kotlinx.android.synthetic.main.fragment_posts_feed.view.*
 
 class PostsFeedFragment : Fragment() {
@@ -18,6 +19,8 @@ class PostsFeedFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.fragment_posts_feed, container, false)
+
+        v.contentLoadingProgressBar.show()
 
         val adapter = PostsFeedRecyclerAdapter()
         v.recyclerPostsList.apply {
@@ -30,6 +33,7 @@ class PostsFeedFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         viewModel.readAllData.observe(viewLifecycleOwner, { postsList ->
+            v.contentLoadingProgressBar.hide()
             adapter.setData(postsList)
         })
 
