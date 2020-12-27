@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htec.task.R
 import com.htec.task.ui.main.data.MainViewModel
-import kotlinx.android.synthetic.main.fragment_posts_feed.*
 import kotlinx.android.synthetic.main.fragment_posts_feed.view.*
 
 class PostsFeedFragment : Fragment() {
@@ -33,15 +35,19 @@ class PostsFeedFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         viewModel.readAllData.observe(viewLifecycleOwner, { postsList ->
+            v.tvEmptyListError.visibility = if(postsList.isEmpty()) View.VISIBLE else View.GONE
             v.contentLoadingProgressBar.hide()
             adapter.setData(postsList)
         })
 
         v.swipeRefresh.setOnRefreshListener {
-            viewModel.fetchPostList()
-            Toast.makeText(requireContext(), getString(R.string.success_refreshed_posts_list), Toast.LENGTH_SHORT).show()
-            v.swipeRefresh.isRefreshing = false
+            viewModel.fetchByClient().observe(viewLifecycleOwner, {
+                val resId = if(it) R.string.success_refreshed_posts_list else R.string.failed_to_refresh_list
+                Toast.makeText(requireContext(), getString(resId), Toast.LENGTH_SHORT).show()
+                v.swipeRefresh.isRefreshing = false
+            })
         }
+
         activity?.invalidateOptionsMenu()
         return v
     }

@@ -9,9 +9,9 @@ import com.htec.task.repository.PreferenceDataStore
 import com.htec.task.repository.retrofit.ResultWrapper
 import com.htec.task.repository.room.RoomPersistenceService
 import com.htec.task.utils.Constants
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
@@ -29,7 +29,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
             val lastUpdateTime: Long = preferenceDataStore.readLastUpdateTime.first()
             val now = System.currentTimeMillis()
             if (TimeUnit.MILLISECONDS.toMinutes(now - lastUpdateTime) >= Constants.INVALIDATE_CACHE_TIME_IN_MINUTES) {
-                fetchPostList()
+                fetchPostList {}
             }
         }
     }
@@ -42,18 +42,32 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         repository.cancelFetchingAuthorData()
     }
 
-    fun removePost(post : PostDBModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.removePost(post)
+    fun removePost(post : PostDBModel) = viewModelScope.launch(Dispatchers.IO) {
+        repository.removePost(post)
+    }
+
+    fun fetchByClient() = object : LiveData<Boolean>() {
+        override fun onActive() {
+            super.onActive()
+            fetchPostList {
+               viewModelScope.launch {
+                   withContext(Main) {
+                       postValue(it)
+                   }
+               }
+            }
         }
     }
 
-    fun fetchPostList() {
-        storeLastUpdatedTime()
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.fetchPostList()
-        }
-    }
+    private fun fetchPostList(callback: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        delay(5000)
+         repository.fetchPostList { isSuccessfully ->
+             if (isSuccessfully) {
+                 storeLastUpdatedTime()
+             }
+             callback(isSuccessfully)
+         }
+     }
 
     private fun storeLastUpdatedTime() = viewModelScope.launch(Dispatchers.IO) {
         preferenceDataStore.saveCurrentTime()

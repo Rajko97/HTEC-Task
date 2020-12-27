@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.htec.task.model.db.PostDBModel
 
+
 @Dao
 interface PostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -13,5 +14,9 @@ interface PostDao {
     fun findAll(): LiveData<List<PostDBModel>>
 
     @Delete
-    suspend fun deleteOne(post: PostDBModel)
+    fun deleteOne(post: PostDBModel)
+
+//    ForTesting
+//    @Query("DELETE FROM posts_table")
+//    fun deleteAll()
 }

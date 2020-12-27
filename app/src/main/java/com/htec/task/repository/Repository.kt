@@ -1,5 +1,6 @@
 package com.htec.task.repository
 
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.htec.task.model.db.PostDBModel
@@ -23,23 +24,25 @@ class Repository(private val postDao: PostDao) {
 
     val readAllData: LiveData<List<PostDBModel>> = postDao.findAll()
 
-    suspend fun removePost(post: PostDBModel) {
-        postDao.deleteOne(post)
+    fun removePost(post: PostDBModel) {
+       postDao.deleteOne(post)
     }
 
-    suspend fun fetchPostList() {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    suspend fun fetchPostList(callback: (Boolean) -> Unit) {
         lateinit var response : Response<List<PostNetworkModel>>
         try {
             response = postsApi.fetchAllPostsFeed().execute()
             if (response.isSuccessful && response.body() != null) {
-                val data = response.body()
-                if (data != null) {
-                    insertMany(DataMapper.convertNetworkToDB(data))
-                }
+                val data = response.body()!!
+                insertMany(DataMapper.convertNetworkToDB(data))
+                callback(true)
+                return
             }
         } catch(exception : Exception) {
 
         }
+        callback(false)
     }
 
     private var cachedAuthorId : Int? = null
