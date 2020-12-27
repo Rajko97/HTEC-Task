@@ -6,15 +6,12 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.htec.task.R
 import com.htec.task.repository.retrofit.ResultWrapper.Success
-import com.htec.task.repository.retrofit.ResultWrapper.GenericError
-import com.htec.task.repository.retrofit.ResultWrapper.NetworkError
 import com.htec.task.ui.main.data.MainViewModel
 import kotlinx.android.synthetic.main.fragment_post_details.view.*
 
@@ -34,7 +31,7 @@ class PostDetailsFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         v.contentLoadingProgressBar.show()
-        viewModel.authorData(args.post.ownerId).observe(viewLifecycleOwner, Observer { response ->
+        viewModel.authorData(args.post.ownerId).observe(viewLifecycleOwner, { response ->
             v.tvPostTitle.text = args.post.title
             v.tvPostBody.apply {
                 text = args.post.body
