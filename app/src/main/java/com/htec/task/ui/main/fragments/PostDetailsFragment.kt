@@ -48,7 +48,7 @@ class PostDetailsFragment : Fragment() {
                     v.tvEmail.text = response.value.email
                 }
                 else -> {
-                    v.tvName.text = "Failed to load Author's Info"
+                    v.tvName.text = getString(R.string.failed_to_load_author)
                 }
             }
             v.contentLoadingProgressBar.hide()
