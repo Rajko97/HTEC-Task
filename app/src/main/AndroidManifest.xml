@@ -4,6 +4,7 @@
     package="com.htec.task">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:name=".HtecApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HTECTask"
         tools:ignore="AllowBackup">
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".ui.main.MainActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

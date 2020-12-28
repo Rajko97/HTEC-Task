@@ -15,20 +15,13 @@ abstract class RoomPersistenceService : RoomDatabase() {
         @Volatile
         private var INSTANCE: RoomPersistenceService? = null
 
-        fun getDatabase(context: Context): RoomPersistenceService{
-            val tempInstance = INSTANCE
-            if(tempInstance != null){
-                return tempInstance
-            }
-            synchronized(this){
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    RoomPersistenceService::class.java,
-                    "database-htec-task"
-                ).build()
-                INSTANCE = instance
-                return instance
-            }
+        operator fun invoke(context: Context) = INSTANCE ?: synchronized(this) {
+            INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
         }
+        private fun buildDatabase(context: Context) =
+            Room.databaseBuilder(context.applicationContext,
+                RoomPersistenceService::class.java,
+                "database-htec-task"
+            ).build()
     }
 }

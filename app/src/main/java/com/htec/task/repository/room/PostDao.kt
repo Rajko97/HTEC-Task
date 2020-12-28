@@ -1,6 +1,6 @@
 package com.htec.task.repository.room
 
-import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.htec.task.model.db.PostDBModel
 
@@ -10,8 +10,12 @@ interface PostDao {
     suspend fun insertMany(posts: List<PostDBModel>)
 
     @Query("SELECT * FROM posts_table ORDER BY postId ASC")
-    fun findAll(): LiveData<List<PostDBModel>>
+    fun findAll(): PagingSource<Int, PostDBModel>
 
     @Delete
-    suspend fun deleteOne(post: PostDBModel)
+    fun deleteOne(post: PostDBModel)
+
+//    ForTesting
+//    @Query("DELETE FROM posts_table")
+//    fun deleteAll()
 }
