@@ -43,6 +43,4 @@ class PostsFeedFragment : Fragment() {
         activity?.invalidateOptionsMenu()
         return v
     }
-
-
 }
