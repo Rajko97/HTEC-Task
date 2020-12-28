@@ -11,29 +11,32 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.htec.task.R
+import com.htec.task.databinding.FragmentPostDetailsBinding
 import com.htec.task.repository.retrofit.ResultWrapper.Success
 import com.htec.task.ui.main.data.MainViewModel
-import kotlinx.android.synthetic.main.fragment_post_details.view.*
 
 const val KEY_IS_DIALOG_SHOWING = "isDialogShowing"
 
 class PostDetailsFragment : Fragment() {
+    private var _binding: FragmentPostDetailsBinding? = null
+    private val binding get() = _binding!!
+
     private val args by navArgs<PostDetailsFragmentArgs>()
     private lateinit var viewModel : MainViewModel
     private var confirmDialog : AlertDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_post_details, container, false)
+        _binding = FragmentPostDetailsBinding.inflate(inflater, container, false)
 
         if(savedInstanceState?.getBoolean(KEY_IS_DIALOG_SHOWING) == true)
             showConfirmationDialog()
 
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
-        v.contentLoadingProgressBar.show()
+        binding.contentLoadingProgressBar.show()
         viewModel.authorData(args.post.ownerId).observe(viewLifecycleOwner, { response ->
-            v.tvPostTitle.text = args.post.title
-            v.tvPostBody.apply {
+            binding.tvPostTitle.text = args.post.title
+            binding.tvPostBody.apply {
                 text = args.post.body
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                     justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
@@ -41,18 +44,18 @@ class PostDetailsFragment : Fragment() {
             }
             when (response) {
                 is Success -> {
-                    v.tvName.text = getString(R.string.by_author, response.value.fullName)
-                    v.tvEmail.text = response.value.email
+                    binding.tvName.text = getString(R.string.by_author, response.value.fullName)
+                    binding.tvEmail.text = response.value.email
                 }
                 else -> {
-                    v.tvName.text = getString(R.string.failed_to_load_author)
+                    binding.tvName.text = getString(R.string.failed_to_load_author)
                 }
             }
-            v.contentLoadingProgressBar.hide()
+            binding.contentLoadingProgressBar.hide()
         })
         activity?.invalidateOptionsMenu()
         setHasOptionsMenu(true)
-        return v
+        return binding.root
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -63,6 +66,7 @@ class PostDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewModel.cancelFetchingAuthorData()
+        _binding = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

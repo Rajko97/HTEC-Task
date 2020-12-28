@@ -1,47 +1,37 @@
 package com.htec.task.ui.main.fragments
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.htec.task.R
+import com.htec.task.databinding.PostsFeedRecyclerItemBinding
 import com.htec.task.model.db.PostDBModel
 
 class PostsFeedRecyclerAdapter : PagingDataAdapter<PostDBModel ,PostsFeedRecyclerAdapter.PostsViewHolder>(DIFF_CALLBACKS) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
-        return PostsViewHolder(LayoutInflater.from(parent.context).inflate(
-                R.layout.posts_feed_recycler_item,
-                parent,
-                false
-            )
-        )
+        val binding = PostsFeedRecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PostsViewHolder(binding)
     }
 
-    inner class PostsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvPostTitle = itemView.findViewById<TextView>(R.id.tvPostTitle)
-        private val tvPostBody = itemView.findViewById<TextView>(R.id.tvPostBody)
-        private val recyclerItem = itemView.findViewById<ConstraintLayout>(R.id.recyclerItem)
-
+    inner class PostsViewHolder(private val binding: PostsFeedRecyclerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: PostDBModel) {
-            tvPostTitle.text = item.title
-            tvPostBody.text = item.body
-            recyclerItem.setOnClickListener {
-                val action = PostsFeedFragmentDirections.actionPostsFeedFragmentToPostDetailsFragment(
-                    item
-                )
+            binding.tvPostTitle.text = item.title
+            binding.tvPostBody.text = item.body
+            binding.recyclerItem.setOnClickListener {
+                val action = PostsFeedFragmentDirections.actionPostsFeedFragmentToPostDetailsFragment(item)
                 itemView.findNavController().navigate(action)
             }
         }
     }
 
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        return holder.bind(getItem(position)!!)
+        val currentItem = getItem(position)
+
+        if(currentItem != null)
+            holder.bind(currentItem)
     }
 
     companion object {
