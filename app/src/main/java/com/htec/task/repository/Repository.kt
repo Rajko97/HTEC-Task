@@ -3,6 +3,9 @@ package com.htec.task.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import com.htec.task.model.db.PostDBModel
 import com.htec.task.model.network.AuthorsNetworkModel
 import com.htec.task.model.network.PostNetworkModel
@@ -22,10 +25,11 @@ class Repository(private val postDao: PostDao) {
 
     private var fetchAuthorDataJob : CompletableJob? = null
 
-    val readAllData: LiveData<List<PostDBModel>> = postDao.findAll()
+    val readAllData = Pager(PagingConfig(pageSize = 20, enablePlaceholders = false, maxSize = 60)) { postDao.findAll()}.liveData
 
     fun removePost(post: PostDBModel) {
        postDao.deleteOne(post)
+        //postDao.deleteAll() //for testing
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")

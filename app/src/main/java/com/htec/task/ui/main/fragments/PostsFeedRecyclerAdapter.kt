@@ -6,21 +6,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.htec.task.R
 import com.htec.task.model.db.PostDBModel
 
-class PostsFeedRecyclerAdapter : RecyclerView.Adapter<PostsFeedRecyclerAdapter.PostsViewHolder>() {
-    private var postsList = emptyList<PostDBModel>()
+class PostsFeedRecyclerAdapter : PagingDataAdapter<PostDBModel ,PostsFeedRecyclerAdapter.PostsViewHolder>(DIFF_CALLBACKS) {
 
-    fun setData(newData: List<PostDBModel>) {
-        val diffResult = DiffUtil.calculateDiff(MyDiffCallback(newData, this.postsList))
-        postsList = newData
-        diffResult.dispatchUpdatesTo(this)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
+        return PostsViewHolder(LayoutInflater.from(parent.context).inflate(
+                R.layout.posts_feed_recycler_item,
+                parent,
+                false
+            )
+        )
     }
 
-    class PostsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PostsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvPostTitle = itemView.findViewById<TextView>(R.id.tvPostTitle)
         private val tvPostBody = itemView.findViewById<TextView>(R.id.tvPostBody)
         private val recyclerItem = itemView.findViewById<ConstraintLayout>(R.id.recyclerItem)
@@ -37,40 +40,21 @@ class PostsFeedRecyclerAdapter : RecyclerView.Adapter<PostsFeedRecyclerAdapter.P
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostsViewHolder {
-        return PostsViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.posts_feed_recycler_item,
-                parent,
-                false
-            )
-        )
-    }
-
     override fun onBindViewHolder(holder: PostsViewHolder, position: Int) {
-        holder.bind(postsList[position])
+        return holder.bind(getItem(position)!!)
     }
 
-    override fun getItemCount(): Int {
-        return postsList.size
-    }
+    companion object {
+        private val DIFF_CALLBACKS = object : DiffUtil.ItemCallback<PostDBModel>() {
 
-}
+            override fun areItemsTheSame(oldItem: PostDBModel, newItem: PostDBModel): Boolean {
+                return oldItem.postId == newItem.postId
+            }
 
-private class MyDiffCallback(var newList : List<PostDBModel>, var oldList : List<PostDBModel>) : DiffUtil.Callback(){
-    override fun getOldListSize(): Int {
-        return oldList.size
-    }
+            override fun areContentsTheSame(oldItem: PostDBModel, newItem: PostDBModel): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun getNewListSize(): Int {
-        return newList.size
-    }
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].postId == newList[newItemPosition].postId
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition]
+        }
     }
 }
