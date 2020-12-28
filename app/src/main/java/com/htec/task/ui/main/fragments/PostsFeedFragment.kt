@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htec.task.R
 import com.htec.task.databinding.FragmentPostsFeedBinding
+import com.htec.task.ui.main.MainActivity
 import com.htec.task.ui.main.data.MainViewModel
 import com.scwang.smart.refresh.header.ClassicsHeader
 import kotlinx.coroutines.*
@@ -38,6 +39,11 @@ class PostsFeedFragment : Fragment() {
 
         binding.contentLoadingProgressBar.show()
 
+        val mainActivity = activity
+        if(mainActivity is MainActivity) {
+            binding.appToolbar.setTitle(R.string.fragment_posts_title)
+            mainActivity.setSupportActionBar(binding.appToolbar)
+        }
         val adapter = PostsFeedRecyclerAdapter()
         binding.recyclerPostsList.apply {
             with(LinearLayoutManager(context)) {

@@ -9,10 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.htec.task.R
 import com.htec.task.databinding.FragmentPostDetailsBinding
 import com.htec.task.repository.retrofit.ResultWrapper.Success
+import com.htec.task.ui.main.MainActivity
 import com.htec.task.ui.main.data.MainViewModel
 
 const val KEY_IS_DIALOG_SHOWING = "isDialogShowing"
@@ -32,6 +34,15 @@ class PostDetailsFragment : Fragment() {
             showConfirmationDialog()
 
         viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
+        val mainActivity = activity
+        if(mainActivity is MainActivity) {
+            mainActivity.setSupportActionBar(binding.toolbar)
+            NavigationUI.setupActionBarWithNavController(mainActivity, findNavController())
+        }
+        binding.collapsingToolbarLayout.title = args.post.title
+        activity?.actionBar?.setDisplayHomeAsUpEnabled(true)
+        activity?.actionBar?.setDisplayShowHomeEnabled(true)
 
         binding.contentLoadingProgressBar.show()
         viewModel.authorData(args.post.ownerId).observe(viewLifecycleOwner, { response ->
