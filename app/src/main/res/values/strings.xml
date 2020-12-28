@@ -5,6 +5,7 @@
     <string name="success_refreshed_posts_list">Posts have been successfully updated!</string>
     <string name="failed_to_refresh_list">Failed to refresh list!</string>
     <string name="no_items_were_found">Ooops! We didn\'t success to find posts.\n Try to refresh!</string>
+    <string name="refresh_last_update">Last update %1$s</string>
     <!-- PostDetails Fragment -->
     <string name="fragment_details_title">Details</string>
     <string name="menu_option_delete">Delete</string>

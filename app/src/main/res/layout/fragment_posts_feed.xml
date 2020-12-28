@@ -32,7 +32,7 @@
         android:gravity="center"
         android:padding="16dp"/>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -41,11 +41,14 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerPostsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbars="vertical"
             tools:listitem="@layout/posts_feed_recycler_item" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,11 +11,9 @@ import com.htec.task.repository.PreferenceDataStore
 import com.htec.task.repository.retrofit.ResultWrapper
 import com.htec.task.repository.room.RoomPersistenceService
 import com.htec.task.utils.Constants
-import io.reactivex.Flowable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import java.util.concurrent.TimeUnit
 
@@ -41,6 +39,9 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun getLastUpdateTime(): Flow<Long> {
+        return preferenceDataStore.readLastUpdateTime
+    }
     fun authorData(authorId : Int) : LiveData<ResultWrapper<AuthorsNetworkModel>> {
         return repository.fetchAuthorData(authorId)
     }
