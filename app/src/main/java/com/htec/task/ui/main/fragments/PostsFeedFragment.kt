@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.htec.task.R
@@ -68,7 +70,7 @@ class PostsFeedFragment : Fragment() {
                 val localTime = LocalDateTime.ofInstant(
                     Instant.ofEpochMilli(milliSeconds),
                     ZoneId.systemDefault()
-                );
+                )
                 val time = formatter.format(localTime)
                 refreshLayoutHeader.setLastUpdateText(getString(R.string.refresh_last_update, time))
             }
