@@ -6,7 +6,7 @@ class Constants {
         val BASE_URL = "https://jsonplaceholder.typicode.com"
 
         @JvmStatic
-        val INVALIDATE_CACHE_TIME_IN_MINUTES = 1
+        val INVALIDATE_CACHE_TIME_IN_MINUTES = 5
 
         @JvmStatic
         val NETWORK_TIME_OUT_TIME_IN_SECONDS = 5
